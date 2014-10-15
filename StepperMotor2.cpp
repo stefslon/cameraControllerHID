@@ -220,10 +220,8 @@ void StepperMotor2::move()
 			//_stepDelay = ((unsigned long)msecToComplete*1e3) / (unsigned long)abs(_gotoPosition-_currentPosition);
 			if (_gotoActive) {
 				_stepDelay = sineEaseInOut(abs(_gotoPosition - _currentPosition), abs(_gotoPosition - _gofromPosition), _gotoMsecToComplete);
-				if (_stepDelay<SM2_MIN_DELAY) { _stepDelay = SM2_MIN_DELAY; Serial.println("    _stepDelay limiting!"); }
-				if (_stepDelay>SM2_MAX_DELAY) { _stepDelay = SM2_MAX_DELAY; Serial.println("    _stepDelay limiting!"); }
-				//Serial.print("    _stepDelay update ");
-				//Serial.println(_stepDelay);
+				if (_stepDelay<SM2_MIN_DELAY) { _stepDelay = SM2_MIN_DELAY; }
+				if (_stepDelay>SM2_MAX_DELAY) { _stepDelay = SM2_MAX_DELAY; }
 			}
 		}
 	}
@@ -346,4 +344,5 @@ unsigned long StepperMotor2::isqrt(unsigned long x)
         one >>= 2;  
     }  
     return res;  
-}
+} 
+
