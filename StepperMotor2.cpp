@@ -140,35 +140,37 @@ void StepperMotor2::stop()
 */
 void StepperMotor2::gotoPosition(int newPosition, unsigned int msecToComplete)
 {
-	_gotoActive = true;
-	_gotoPosition = newPosition;
-	_gofromPosition = _currentPosition;
-	_gotoMsecToComplete = msecToComplete;
-	if (newPosition>_currentPosition) {
-		_stepDirection = +1;
+	if (!_isCalibrationMode) {
+		_gotoActive = true;
+		_gotoPosition = newPosition;
+		_gofromPosition = _currentPosition;
+		_gotoMsecToComplete = msecToComplete;
+		if (newPosition>_currentPosition) {
+			_stepDirection = +1;
+		}
+		else if (newPosition<_currentPosition) {
+			_stepDirection = -1;
+		}
+		else {
+			_stepDirection = 0;
+			_gotoActive = false;
+		}
+		
+		//requestedSpeedDPS = (_gotoPosition-_currentPosition) * _udegreesStepSize / (timeToComplete*1e6);
+		//_stepDelay = _udegreesStepSize / requestedSpeedDPS;
+		
+		// _stepDelay is in units of usec / step
+		_stepDelay = ((unsigned long)msecToComplete*1e3) / (unsigned long)abs(_gotoPosition-_currentPosition);
+		
+		Serial.print("StepperMotor2: go to position ");
+		Serial.print(_gotoPosition);
+		Serial.print(" with step delay of ");
+		Serial.print(_stepDelay);
+		Serial.print(" usec, from current position of ");
+		Serial.print(_currentPosition);
+		Serial.print(", with step direction ");
+		Serial.println(_stepDirection);
 	}
-	else if (newPosition<_currentPosition) {
-		_stepDirection = -1;
-	}
-	else {
-		_stepDirection = 0;
-		_gotoActive = false;
-	}
-	
-	//requestedSpeedDPS = (_gotoPosition-_currentPosition) * _udegreesStepSize / (timeToComplete*1e6);
-	//_stepDelay = _udegreesStepSize / requestedSpeedDPS;
-	
-	// _stepDelay is in units of usec / step
-	_stepDelay = ((unsigned long)msecToComplete*1e3) / (unsigned long)abs(_gotoPosition-_currentPosition);
-	
-	Serial.print("StepperMotor2: go to position ");
-	Serial.print(_gotoPosition);
-	Serial.print(" with step delay of ");
-	Serial.print(_stepDelay);
-	Serial.print(" usec, from current position of ");
-	Serial.print(_currentPosition);
-	Serial.print(", with step direction ");
-	Serial.println(_stepDirection);
 }
 
 /*
